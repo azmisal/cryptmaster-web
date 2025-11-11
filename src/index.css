@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Crypto Trading Platform Design System */
+    --background: 45 25% 96%;
+    --foreground: 218 25% 15%;
+
+    --card: 45 15% 98%;
+    --card-foreground: 218 25% 15%;
+
+    --popover: 45 15% 98%;
+    --popover-foreground: 218 25% 15%;
+
+    --primary: 271 91% 65%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 271 91% 75%;
+
+    --secondary: 45 20% 94%;
+    --secondary-foreground: 218 25% 15%;
+
+    --muted: 45 15% 92%;
+    --muted-foreground: 218 15% 46%;
+
+    --accent: 271 81% 56%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 218 25% 15%;
+
+    --border: 45 20% 88%;
+    --input: 45 20% 88%;
+    --ring: 271 91% 65%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(271, 91%, 65%), hsl(271, 91%, 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(45, 25%, 96%) 0%, hsl(45, 20%, 94%) 50%, hsl(45, 25%, 96%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.7));
+    --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+
+    /* Shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(271 91% 65% / 0.3);
+    --shadow-glow: 0 0 40px hsl(271 91% 75% / 0.4);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-pulse: pulse 4s ease-in-out infinite;
+  }
+
+  .dark {
+    --background: 218 23% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 218 23% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 218 23% 9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 271 91% 65%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 271 91% 75%;
+
+    --secondary: 218 23% 12%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 218 23% 12%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 271 81% 56%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 218 25% 15%;
+
+    --border: 218 23% 15%;
+    --input: 218 23% 15%;
+    --ring: 271 91% 65%;
+
+    /* Dark Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(271, 91%, 65%), hsl(271, 91%, 75%));
+    --gradient-hero: linear-gradient(135deg, hsl(218, 23%, 7%) 0%, hsl(218, 23%, 9%) 50%, hsl(218, 23%, 7%) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.08));
+    --gradient-glass: linear-gradient(145deg, rgba(0, 0, 0, 0.02), rgba(110, 110, 110, 0.05));
+
+    /* Dark Shadows */
+    --shadow-elegant: 0 10px 30px -10px hsl(271 91% 65% / 0.4);
+    --shadow-glow: 0 0 40px hsl(271 91% 75% / 0.3);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Edge */
+}
+
+/* Remove arrows in Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove arrows in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
