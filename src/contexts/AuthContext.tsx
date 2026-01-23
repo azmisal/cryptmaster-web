@@ -14,7 +14,7 @@ interface AuthContextType {
   signup: (signupData: IUserSignup) => Promise<any>;
   login: (loginData: IUserLogin) => Promise<void>;
   logout: () => Promise<void>;
-  updateUser: (user: IUser | null) => void;
+  updateUser: (user: IUser | null) => Promise<any>;
   refreshToken: () => Promise<void>;
 }
 
@@ -31,12 +31,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const token = sessionStorage.getItem("accessToken");
-    const storedUser = sessionStorage.getItem("user");
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (token && user) {
       setAccessToken(token);
       navigate("/wallet", { replace: true });
-
     }
     else {
       navigate("/");
@@ -69,7 +66,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Store access token in sessionStorage (NOT localStorage for security)
       sessionStorage.setItem("accessToken", data.loginResponse.accessToken);
-      sessionStorage.setItem("user", JSON.stringify(data.loginResponse.user));
 
       setAccessToken(data.loginResponse.accessToken);
       setLoggedIn(true);

@@ -10,7 +10,6 @@ import {
     Avatar,
     Stack,
     Divider,
-    Alert,
 } from "@mui/material";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -44,9 +43,10 @@ const UserProfile = () => {
     const handleSave = async () => {
         try {
             if (!user) return;
-            console.log("Updating user with data:", { ...user, ...formData });
-            await updateUser({ ...user, ...formData });
-            setIsEditing(false);
+            const result = await updateUser({ ...user, ...formData });
+            if (result.status !== 200) {
+                throw new Error("Update failed");
+            }
             toast({
                 title: "Profile Updated",
                 description: "Your profile information has been updated successfully.",
@@ -58,6 +58,9 @@ const UserProfile = () => {
                 description: "Failed to update profile. Please try again.",
                 variant: "destructive",
             });
+        }
+        finally {
+            setIsEditing(false);
         }
     };
 
