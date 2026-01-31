@@ -51,8 +51,7 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
   const { accessToken } = useAuth();
   const { wallet } = useWallet();
   const navigate = useNavigate();
-
-
+  const coinData = wallet.coins.find(item => item.name === coin?.name);
   const handleBuy = async () => {
     const amount = parseFloat(buyAmount);
     const usdtBalance = wallet.coins[0]?.balance || 0;
@@ -245,13 +244,13 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
                 <Box display="flex" justifyContent="space-between" mb={1}>
                   <Typography color="text.secondary">USD Balance:</Typography>
                   <Typography fontWeight="bold" color="primary">
-                    {formatCurrency(100)}
+                    {Math.round((wallet.coins[0]?.balance || 0) * 100) / 100}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between">
                   <Typography color="text.secondary">{coin.symbol} Balance:</Typography>
                   <Typography fontWeight="bold">
-                    {100} {coin.symbol}
+                    {Math.round((coinData?.balance || 0) * 100) / 100} {coin.symbol}
                   </Typography>
                 </Box>
               </CardContent>

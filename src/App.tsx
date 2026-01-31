@@ -18,6 +18,7 @@ import { WalletProvider } from "./contexts/WalletContext";
 import { TextButtonPage } from "./pages/Test"
 import About from "./pages/About";
 import Learn from "./pages/Learn";
+import UserProfile from "./pages/UserProfile";
 
 // const queryClient = new QueryClient();,
 
@@ -44,8 +45,9 @@ const App = () => {
                   <Route path="/graph" element={<ProtectedRoute component={Graph} />} />
                   <Route path="/about" element={<ProtectedRoute component={About} />} />
                   <Route path="/learn" element={<ProtectedRoute component={Learn} />} />
+                  <Route path="/profile" element={<ProtectedRoute component={UserProfile} />} />
                 </Routes>
-                
+
               </AuthProvider>
 
             </ BrowserRouter>
