@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AppBar, Toolbar, Button, IconButton, Drawer, List, ListItem, Box, useTheme, useMediaQuery } from "@mui/material";
-import { Menu, Close } from "@mui/icons-material";
+import { Menu as MenuIcon, Close as CloseIcon, } from "@mui/icons-material";
 import Person2RoundedIcon from '@mui/icons-material/Person2Rounded';
 import { useAuth } from "@/contexts/AuthContext";
 import logoHorizontal from '../assets/logoHorizontal.png';
+import { Menu, MenuItem, Avatar, Divider, Typography } from "@mui/material";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { isLoggedIn, logout } = useAuth()
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openProfileMenu = Boolean(anchorEl);
+  const { user } = useAuth();
+  const { logout } = useAuth()
   const navLinks = [
     { name: "About", path: "/about" },
     { name: "Learn", path: "/learn" },
@@ -17,6 +21,11 @@ const Navbar = () => {
     { name: "Trade", path: "/trade" },
     { name: "Wallet", path: "/wallet" },
   ];
+  useEffect(() => {
+    setAnchorEl(null);
+  }, [location.pathname]);
+
+  const profile = { name: "Profile", path: "/profile" };
   const isActive = (path: string) => location.pathname === path;
 
   const theme = useTheme();
@@ -84,20 +93,88 @@ const Navbar = () => {
                   {link.name}
                 </Button>
               ))}
-              <Person2RoundedIcon
-                onClick={() => logout()}
+              <IconButton
+                onClick={(e) => setAnchorEl(e.currentTarget)}
                 sx={{
                   ml: 2,
-                  cursor: 'pointer',
-                  color: 'hsl(210, 40%, 98%)',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  '&:hover': {
-                    opacity: 0.9,
-                    color: 'hsla(0, 0%, 42%, 1.00)'
+                  transition: "0.2s",
+                  "&:hover": {
+                    color: "hsl(271, 91%, 65%)",
+                    transform: "scale(1.1)"
                   }
                 }}
-              />
+              >
+                <Person2RoundedIcon fontSize="medium" />
+              </IconButton>
+
+              <Menu
+                anchorEl={anchorEl}
+                open={openProfileMenu}
+                onClose={() => setAnchorEl(null)}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                transitionDuration={200}
+
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    mt: 1,
+                    minWidth: 220,
+                    borderRadius: 1,
+                    boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
+                    backgroundImage:
+                      theme.palette.mode === "dark"
+                        ? "linear-gradient(180deg, #111827, #020617)"
+                        : "linear-gradient(180deg, #ffffff, #f8fafc)"
+                  }
+                }}
+              >
+                {/* User Header */}
+                <Box sx={{ px: 2, py: 1.5, display: "flex", alignItems: "center", gap: 1.5 }}>
+                  <Avatar
+                    sx={{
+                      bgcolor: "hsl(271, 91%, 65%)",
+                      width: 40,
+                      height: 40,
+                      fontWeight: 600
+                    }}
+                  >
+                    A
+                  </Avatar>
+                  <Box>
+                    <Typography fontWeight={600}>{user?.fname} {user?.lname}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Virtual Trader
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Divider />
+
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  onClick={() => setAnchorEl(null)}
+                  sx={{ py: 1.2 }}
+                >
+                  Profile
+                </MenuItem>
+
+                <MenuItem
+                  onClick={async () => {
+                    await logout();
+                    setAnchorEl(null);
+                  }}
+                  sx={{
+                    py: 1.2,
+                    color: "error.main",
+                    fontWeight: 500
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              </Menu>
+
             </Box>
           )}
 
@@ -107,7 +184,7 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               sx={{ color: theme.palette.text.primary }}
             >
-              {isOpen ? <Close /> : <Menu />}
+              {isOpen ? <CloseIcon /> : <MenuIcon />}
             </IconButton>
           )}
         </Toolbar>
@@ -158,8 +235,38 @@ const Navbar = () => {
               </Button>
             </ListItem>
           ))}
+          <ListItem sx={{ p: 0, mb: 1 }}>
+            <Button
+              component={Link}
+              to={profile.path}
+              onClick={() => setIsOpen(false)}
+              fullWidth
+              sx={{
+                justifyContent: 'flex-start',
+                px: 2,
+                py: 1.5,
+                borderRadius: 1,
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                textTransform: 'none',
+                color: isActive(profile.path)
+                  ? 'hsl(271, 91%, 65%)'
+                  : theme.palette.text.secondary,
+                bgcolor: isActive(profile.path)
+                  ? 'hsla(271, 91%, 65%, 0.1)'
+                  : 'transparent',
+                '&:hover': {
+                  color: 'hsl(271, 91%, 65%)',
+                  bgcolor: 'hsla(271, 91%, 65%, 0.1)'
+                }
+              }}
+            >
+              {profile.name}
+            </Button>
+          </ListItem>
           <ListItem sx={{ p: 0, mt: 2 }}>
             <Button
+              onClick={() => logout()}
               fullWidth
               variant="contained"
               sx={{
@@ -172,7 +279,7 @@ const Navbar = () => {
                 }
               }}
             >
-              Sign Up
+              Logout
             </Button>
           </ListItem>
         </List>
