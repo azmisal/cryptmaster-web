@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (signupData: IUserSignup) => {
     try {
-      const response = await API.post("/signup", signupData);
+      const response = await API.post("/auth/signup", signupData);
 
       // Axios automatically parses JSON
       return response.data;
@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (loginData: IUserLogin) => {
     setIsLoading(true);
     try {
-      const response = await API.post("/login", loginData);
+      const response = await API.post("/auth/login", loginData);
       if (response.status !== 200) {
         throw new Error("Login failed");
       }
@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const apiClient = createApiClient(accessToken);
     try {
       console.log("ENtered Logout try");
-      const logoutResponse = await apiClient.post("/logout", { user_Id: user?.user_Id });
+      const logoutResponse = await apiClient.post("/auth/logout", { user_Id: user?.user_Id });
       console.log(logoutResponse);
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("user");
