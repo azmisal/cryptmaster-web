@@ -1,7 +1,5 @@
 import { Box, Container, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
-import { useEffect, useState } from 'react';
 import heroBackground from "@/assets/crypto-hero-bg.jpg";
-import Logo from '@/assets/logo.png'
 import FloatingLogos from './FloatingLogo';
 interface HeroSectionProps {
   onGetStarted?: () => void;

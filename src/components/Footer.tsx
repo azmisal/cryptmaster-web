@@ -1,4 +1,4 @@
-import { Link, useActionData } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Box, Container, Typography, IconButton, useTheme } from "@mui/material";
 import { Facebook, LinkedIn } from "@mui/icons-material";
 import XIcon from '@mui/icons-material/X';
@@ -7,16 +7,16 @@ import logoHorizontal from '../assets/logoHorizontal.png';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const { isLoggedIn } = useAuth();
+  const { isAuthenticated } = useAuth();
   const footerLinks = {
     navigation: [
-      { name: "About", path: isLoggedIn ? "/about" : "/login" },
-      { name: "Learn", path: isLoggedIn ? "/learn" : "/login" },
+      { name: "About", path: isAuthenticated ? "/about" : "/login" },
+      { name: "Learn", path: isAuthenticated ? "/learn" : "/login" },
     ],
     platform: [
-      { name: "Graphs", path: isLoggedIn ? "/learn" : "/login" },
-      { name: "Trade", path: isLoggedIn ? "/learn" : "/login" },
-      { name: "Wallet", path: isLoggedIn ? "/learn" : "/login" },
+      { name: "Graphs", path: isAuthenticated ? "/learn" : "/login" },
+      { name: "Trade", path: isAuthenticated ? "/learn" : "/login" },
+      { name: "Wallet", path: isAuthenticated ? "/learn" : "/login" },
     ],
   };
 

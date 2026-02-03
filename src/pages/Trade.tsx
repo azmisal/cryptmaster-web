@@ -1,9 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Container,
   Typography,
   TextField,
-  Grid,
   Card,
   CardContent,
   Box,
@@ -22,9 +21,9 @@ import TradeModal from '@/components/TradeModal';
 import { getCoins } from '@/api/GetCoinsDetails';
 import { formatCurrency, formatMarketCap } from '@/utils/Common';
 import { ITradeCoin } from '@/interfaces/CoinInterface';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from "@/hooks/use-toast"; // keep if you want
-import { useNavigate,useLocation  } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { tokenStore } from '@/stores/tokenstore';
 
 
 const Trade = () => {
@@ -34,14 +33,15 @@ const Trade = () => {
   const [selectedCoin, setSelectedCoin] = useState<typeof cryptoData[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [focused, setFocused] = useState(false)
-  const [cryptoData, setCryptoData] = useState<ITradeCoin[] | null>(null);
-  const { accessToken } = useAuth();
+  const [cryptoData, setCryptoData] = useState<ITradeCoin[] | any | null >(null);
   const { toast } = useToast();
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const location = useLocation();
 
   useEffect(() => {
+    const accessToken = tokenStore().getToken();
+
     const fetchCoins = async () => {
       try {
         const coins = await getCoins(accessToken);
@@ -72,7 +72,7 @@ const navigate = useNavigate();
     };
 
     if (accessToken) fetchCoins();
-  }, [accessToken, location.search]);
+  }, [location.search]);
 
 
 
@@ -96,12 +96,13 @@ const navigate = useNavigate();
   };
   return (
     <Box sx={{
-      minHeight: '100vh'}}>
+      minHeight: '100vh'
+    }}>
       {isModalOpen ? <></> : <Navbar />}
 
-      <Container maxWidth="xl" sx={{  position: 'relative', zIndex: 1 }}>
+      <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
-         <Box
+        <Box
           component="section"
           sx={{
             position: 'relative',

@@ -2,7 +2,6 @@ import { Box } from '@mui/material';
 import HeroSection from "@/components/HeroSection";
 import StatsSection from "@/components/StatsSection";
 import FeaturesSection from "@/components/FeaturesSection";
-import Navbar from "@/components/Navbar";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
