@@ -1,19 +1,25 @@
+import { createApiClient } from "@/api/AuthApi";
+import { IUser } from "@/interfaces/UserInterfaces";
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { useAuth } from "./AuthContext";
+import { tokenStore } from "@/stores/tokenstore";
 
 // Define the shape of user data
 interface IUserContext {
-  user_id: string;
-  email: string;
-  setUser: (user: { user_id: string; email: string }) => void;
+  user: IUser | null;
+  setUser: (user: IUser) => void;
   clearUser: () => void;
+  userActionLoading: boolean;
+  updateUser: (user: IUser | null) => Promise<any>;
 }
 
 // Default values
 const defaultUserContext: IUserContext = {
-  user_id : "",
-  email: "",
-  setUser: () => {},
-  clearUser: () => {},
+  user: null,
+  userActionLoading: false,
+  setUser: () => { },
+  clearUser: () => { },
+  updateUser: async () => Promise.resolve(null),
 };
 
 // Create context
@@ -21,22 +27,37 @@ const UserContext = createContext<IUserContext>(defaultUserContext);
 
 // Provider component
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user_id, setId] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [user, setUser] = useState<IUser | null>(null);
+  const [userActionLoading, setUserActionLoading] = useState(false);
 
-  const setUser = (user: { user_id: string; email: string }) => {
-    setId(user.user_id);
-    setEmail(user.email);
+  const setUserContext = (user: IUser) => {
+    setUser(user);
   };
 
   const clearUser = () => {
-    setId("");
-    setEmail("");
+    setUser(null);
   };
 
+  const updateUser = async (user: IUser) => {
+
+    setUserActionLoading(true);
+    const accessToken = tokenStore().getToken();
+    const apiClient = createApiClient(accessToken);
+    try {
+      const newUser = await apiClient.post("/update-user", { user: user });
+      setUser(newUser.data.updateResponse);
+      return newUser
+    } catch (error) {
+      console.error("user Update error:", error);
+    } finally {
+      setUserActionLoading(false);
+    }
+
+  }
+
   const contextValue = React.useMemo(
-    () => ({ user_id, email, setUser, clearUser }),
-    [user_id, email]
+    () => ({ user, setUser: setUserContext, userActionLoading, clearUser, updateUser }),
+    [user, userActionLoading]
   );
 
   return (
@@ -47,4 +68,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 };
 
 // Hook to use context easily
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const ctx = useContext(UserContext);
+  if (!ctx) throw new Error("useUser must be used within UserProvider");
+  return ctx;
+};

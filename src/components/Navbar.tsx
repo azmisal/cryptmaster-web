@@ -6,13 +6,14 @@ import Person2RoundedIcon from '@mui/icons-material/Person2Rounded';
 import { useAuth } from "@/contexts/AuthContext";
 import logoHorizontal from '../assets/logoHorizontal.png';
 import { Menu, MenuItem, Avatar, Divider, Typography } from "@mui/material";
+import { useUser } from "@/contexts/UserContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openProfileMenu = Boolean(anchorEl);
-  const { user } = useAuth();
+  const { user } = useUser();
   const { logout } = useAuth()
   const navLinks = [
     { name: "About", path: "/about" },

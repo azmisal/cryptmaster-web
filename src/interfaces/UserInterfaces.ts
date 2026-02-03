@@ -1,4 +1,3 @@
-import { IWalletCoin } from "./CoinInterface";
 
 export interface IUser {
     user_Id: string;

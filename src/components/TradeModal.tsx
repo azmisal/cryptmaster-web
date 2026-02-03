@@ -20,11 +20,11 @@ import { TrendingUp, TrendingDown, Wallet, AttachMoney, Close } from "@mui/icons
 import TradingChart from "@/components/TradingChart";
 import { useToast } from "@/hooks/use-toast"; // keep if you want
 import { formatCurrency } from "@/utils/Common";
-import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useWallet } from "@/contexts/WalletContext";
 import { updateWallet } from "@/api/UpdateWallet";
 import { IBalanceCoins } from "@/interfaces/CoinInterface";
+import { tokenStore } from "@/stores/tokenstore";
 
 interface Coin {
   id: string;
@@ -48,10 +48,10 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
   const [tab, setTab] = useState(0);
   const theme = useTheme();
   const { toast } = useToast();
-  const { accessToken } = useAuth();
   const { wallet } = useWallet();
   const navigate = useNavigate();
   const coinData = wallet.coins.find(item => item.name === coin?.name);
+
   const handleBuy = async () => {
     const amount = parseFloat(buyAmount);
     const usdtBalance = wallet.coins[0]?.balance || 0;
@@ -84,10 +84,22 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
     updatedWallet.coins[0].balance -= amount;
 
     setBuyAmount("");
-    const res = await updateWallet(accessToken, updatedWallet);
-    if (res.status === 200) {
-      console.log("await done");
-      navigate('/wallet');
+
+    try {
+      const accessToken = tokenStore().getToken();
+      const res = await updateWallet(accessToken, updatedWallet);
+
+      if (res.status === 200) {
+        navigate("/wallet");
+      }
+    } catch (err: any) {
+      toast({
+        title: "Transaction Failed",
+        description:
+          err?.response?.data?.message ||
+          "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -97,9 +109,6 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
   const handleSell = async () => {
     const amount = parseFloat(sellAmount);
     const coinIndex = wallet.coins.findIndex(item => item.name === coin.name);
-    console.log("coin Index : ", coinIndex);
-    console.log("wallet coin : ", wallet.coins[coinIndex]);
-
     const asset = amount * coin.price;
 
     if (coinIndex === -1) {
@@ -123,23 +132,31 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
 
     if (updatedWallet.coins[coinIndex].balance === amount) {
       updatedWallet.coins.splice(coinIndex, 1);
-      console.log("Updated Coin : ", updatedWallet.coins[coinIndex]);
     }
     else {
       updatedWallet.coins[coinIndex].balance -= amount;
     }
     updatedWallet.coins[0].balance += asset;
-    const res = await updateWallet(accessToken, updatedWallet);
-    if (res.status === 200) {
-      console.log("await done");
-      navigate('/wallet');
+    try {
+      const accessToken = tokenStore().getToken();
+      const res = await updateWallet(accessToken, updatedWallet);
+      if (res.status === 200) {
+        navigate("/wallet");
+      }
+    } catch (err: any) {
+      toast({
+        title: "Transaction Failed",
+        description:
+          err?.response?.data?.message ||
+          "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     }
 
 
   }
 
   if (!coin) return null;
-
   return (
     <Dialog open={isOpen} onClose={onClose} sx={{ maxWidth: { sm: "100%" }, width: '100%', }} fullWidth >
       <DialogTitle
