@@ -15,10 +15,10 @@ import {
 } from "@mui/material";
 import logoVertical from "@/assets/logoVertical.png"
 import { useToast } from "@/hooks/use-toast";
-import cryptoBg from "@/assets/crypto-hero-bg.jpg";
 import { IUserSignup } from "@/interfaces/UserInterfaces";
 import { useAuth } from "@/contexts/AuthContext";
-import axios from 'axios';
+import { useUser } from "@/contexts/UserContext";
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -34,7 +34,8 @@ const Signup = () => {
   const { toast } = useToast();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { signup, isLoading } = useAuth();
+  const { signup, authLoading, actionLoading } = useAuth();
+  const { userActionLoading } = useUser();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -80,7 +81,7 @@ const Signup = () => {
 
       navigate("/login");
     } catch (err: any) {
-      console.log("Went to catch", err)
+      console.log("Signup Failed", err)
       toast({
         title: "Signup Failed",
         description: err.response?.data?.message || "Something went wrong",
@@ -209,8 +210,8 @@ const Signup = () => {
                 sx={{ mb: 3 }}
               />
 
-              <Button type="submit" fullWidth variant="contained" disabled={isLoading}>
-                {isLoading ? "Creating Account..." : "Create Account"}
+              <Button type="submit" fullWidth variant="contained" disabled={authLoading || actionLoading || userActionLoading}>
+                {authLoading || actionLoading || userActionLoading ? "Creating Account..." : "Create Account"}
               </Button>
             </Box>
 

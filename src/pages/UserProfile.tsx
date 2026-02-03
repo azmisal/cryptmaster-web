@@ -11,12 +11,12 @@ import {
     Stack,
     Divider,
 } from "@mui/material";
-import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import PersonIcon from "@mui/icons-material/Person";
+import { useUser } from "@/contexts/UserContext";
 
 const UserProfile = () => {
-    const { user, updateUser } = useAuth();
+    const { user, updateUser } = useUser();
     const { toast } = useToast();
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({

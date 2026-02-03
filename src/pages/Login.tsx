@@ -16,6 +16,7 @@ import cryptoBg from "@/assets/crypto-hero-bg.jpg";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import logoVertical from "@/assets/logoVertical.png"
+import { useUser } from "@/contexts/UserContext";
 
 const Login = () => {
   const [loginData, setData] = useState({ email: "", password: "" });
@@ -23,17 +24,18 @@ const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [error, setError] = useState("");
-  const { login, isLoading } = useAuth();
+  const { login, authLoading, actionLoading } = useAuth();
+  const { userActionLoading } = useUser();
   const navigate = useNavigate();
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-     setError("");
+    setError("");
 
     try {
       const response = await login(loginData);
@@ -44,7 +46,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       navigate("/wallet");
     } catch (err: any) {
       console.log(err);
-       toast({
+      toast({
         title: "Login failed",
         description: "Please try again",
         variant: "destructive",
@@ -141,18 +143,18 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           }}
         >
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-            <Box sx={{ textAlign: 'center', mb: 2 ,display:"flex",alignItems:"center", justifyContent:"center",flexDirection:"column" }}>
+            <Box sx={{ textAlign: 'center', mb: 2, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
               <Box
-              component="img"
-              src={logoVertical}
-              alt="Logo"
-              sx={{
-                width: "200px",
-                height: "auto",
-                // marginBottom: "20px",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-              }}
-            />
+                component="img"
+                src={logoVertical}
+                alt="Logo"
+                sx={{
+                  width: "200px",
+                  height: "auto",
+                  // marginBottom: "20px",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                }}
+              />
               <Typography
                 variant="h6"
                 sx={{
@@ -235,7 +237,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={isLoading}
+                disabled={authLoading || actionLoading || userActionLoading}
                 sx={{
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                   fontWeight: 600,
@@ -254,7 +256,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                   }
                 }}
               >
-                {isLoading ? "Signing In..." : "Sign In"}
+                {authLoading || actionLoading || userActionLoading ? "Signing In..." : "Sign In"}
               </Button>
             </Box>
 

@@ -34,28 +34,29 @@ import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/hooks/use-toast"; // keep if you want
 import { useWallet } from '@/contexts/WalletContext';
+import { tokenStore } from '@/stores/tokenstore';
 
 // Mock data for demonstration
 
 
 export const Wallet: React.FC = () => {
 
-  const { accessToken, user } = useAuth();
+  const { user } = useUser();
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   const { wallet, walletSetter } = useWallet()
 
   useEffect(() => {
+    const accessToken = tokenStore().getToken();
 
     const fetchWallet = async () => {
-      console.log("UseEffect started working");
+
       const user_Id = user.user_Id;
       try {
         const apiClient = createApiClient(accessToken);
         const response = await apiClient.post("/wallet", { user_Id });
         const data = await response.data.wallet;
-        console.log(data);
         walletSetter(data);
       } catch (err: any) {
         if (err.response?.status === 401) {
@@ -78,7 +79,7 @@ export const Wallet: React.FC = () => {
 
   useEffect(() => {
     const fetchValue = async () => {
-      
+
     }
   })
 
