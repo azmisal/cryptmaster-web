@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (token)
             navigate("/wallet");
           else {
-            navigate("/signup");
+            navigate("/");
           }
         } catch {
           tokenStore().clearToken();
