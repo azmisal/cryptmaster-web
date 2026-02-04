@@ -10,14 +10,18 @@ import {
     Avatar,
     Stack,
     Divider,
+    IconButton,
 } from "@mui/material";
 import { useToast } from "@/hooks/use-toast";
 import PersonIcon from "@mui/icons-material/Person";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
 
 const UserProfile = () => {
     const { user, updateUser } = useUser();
     const { toast } = useToast();
+    const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         fname: "",
@@ -65,7 +69,19 @@ const UserProfile = () => {
     };
 
     return (
-        <Container maxWidth="md" sx={{ py: 8 }}>
+        <Container maxWidth="md" sx={{ py: 4 }}>
+            <IconButton
+                onClick={() => navigate(-1)}
+                sx={{
+                    mb: 2,
+                    color: "hsl(271, 91%, 65%)",
+                    "&:hover": {
+                        backgroundColor: "rgba(168, 85, 247, 0.1)",
+                    },
+                }}
+            >
+                <ArrowBackIcon />
+            </IconButton>
             <Card
                 sx={{
                     background: "rgba(255, 255, 255, 0.02)",

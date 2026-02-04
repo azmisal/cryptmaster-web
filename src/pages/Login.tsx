@@ -9,8 +9,11 @@ import {
   Card,
   CardContent,
   useMediaQuery,
-  useTheme
+  useTheme,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useToast } from "@/hooks/use-toast";
 import cryptoBg from "@/assets/crypto-hero-bg.jpg";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +27,7 @@ const Login = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { login, authLoading, actionLoading } = useAuth();
   const { userActionLoading } = useUser();
   const navigate = useNavigate();
@@ -205,11 +209,25 @@ const Login = () => {
                 id="password"
                 label="Password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={loginData.password}
                 onChange={handleChange}
                 required
                 variant="outlined"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        sx={{ color: 'hsla(210, 40%, 98%, 0.6)', padding:"15px" }}
+                      >
+                        {showPassword ? <VisibilityOff sx={{fontSize:18, opacity:0.7}}/> : <Visibility sx={{fontSize:18, opacity:0.7}} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 sx={{
                   mb: 4,
                   '& .MuiOutlinedInput-root': {

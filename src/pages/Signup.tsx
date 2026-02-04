@@ -12,12 +12,19 @@ import {
   Checkbox,
   useMediaQuery,
   useTheme,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import logoVertical from "@/assets/logoVertical.png"
 import { useToast } from "@/hooks/use-toast";
 import { IUserSignup } from "@/interfaces/UserInterfaces";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUser } from "@/contexts/UserContext";
+
+// Password must contain: 1 uppercase, 1 lowercase, 1 number, 1 special char, min 8 chars
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const PASSWORD_REQUIREMENTS = "Password must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character (@$!%*?&)";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -31,6 +38,9 @@ const Signup = () => {
 
   const navigate = useNavigate();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -40,10 +50,29 @@ const Signup = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Validate password in real-time
+    if (name === "password") {
+      if (value && !PASSWORD_REGEX.test(value)) {
+        setPasswordError(PASSWORD_REQUIREMENTS);
+      } else {
+        setPasswordError("");
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate password strength
+    if (!PASSWORD_REGEX.test(formData.password)) {
+      toast({
+        title: "Invalid Password",
+        description: PASSWORD_REQUIREMENTS,
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       toast({
@@ -113,7 +142,7 @@ const Signup = () => {
             borderRadius: 2,
           }}
         >
-          <CardContent sx={{ p: { xs: 3, sm: 4 },display:"flex",alignItems:"center", justifyContent:"center",flexDirection:"column" }}>
+          <CardContent sx={{ p: { xs: 3, sm: 4 }, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
             <Box
               component="img"
               src={logoVertical}
@@ -170,22 +199,53 @@ const Signup = () => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleInputChange}
                 required
+                error={!!passwordError}
+                helperText={passwordError}
                 sx={{ mb: 3 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                        aria-label={showPassword ? "Hide password" : "Show password"}    
+                        sx={{padding:"15px"}}
+                      >
+                        {showPassword ? <VisibilityOff sx={{fontSize:18, opacity:0.7}}/> : <Visibility sx={{fontSize:18, opacity:0.7}} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <TextField
                 fullWidth
                 name="confirmPassword"
                 label="Confirm Password"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 required
                 sx={{ mb: 3 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                        sx={{padding:"15px"}}
+
+                      >
+                        {showConfirmPassword ? <VisibilityOff sx={{fontSize:18, opacity:0.7}}/> : <Visibility sx={{fontSize:18, opacity:0.7}} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
 
               <FormControlLabel

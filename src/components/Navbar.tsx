@@ -163,7 +163,7 @@ const Navbar = () => {
 
                 <MenuItem
                   onClick={async () => {
-                    await logout();
+                    await logout(user.user_Id);
                     setAnchorEl(null);
                   }}
                   sx={{
@@ -267,7 +267,7 @@ const Navbar = () => {
           </ListItem>
           <ListItem sx={{ p: 0, mt: 2 }}>
             <Button
-              onClick={() => logout()}
+              onClick={() => logout(user.user_Id)}
               fullWidth
               variant="contained"
               sx={{

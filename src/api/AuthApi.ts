@@ -90,8 +90,7 @@ api.interceptors.response.use(
           { withCredentials: true }
         );
 
-        const newToken = refreshResponse.data.access_token;
-
+        const newToken = refreshResponse.data.accessToken;
         tokenStore().setToken(newToken);
         api.defaults.headers.common.Authorization = `Bearer ${newToken}`;
 
