@@ -11,7 +11,7 @@ interface AuthContextType {
   actionLoading: boolean;
   signup: (data: IUserSignup) => Promise<any>;
   login: (data: IUserLogin) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: (user_id: string) => Promise<void>;
   refreshToken: () => Promise<void>;
 }
 
@@ -74,13 +74,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = async () => {
+  const logout = async (user_Id: string) => {
     setActionLoading(true);
     try {
       const token = tokenStore().getToken();
       if (token) {
         const apiClient = createApiClient(token);
-        await apiClient.post("/auth/logout");
+        await apiClient.post("/auth/logout",{ user_Id:  user_Id});
       }
     } finally {
       tokenStore().clearToken();
