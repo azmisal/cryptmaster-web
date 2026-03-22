@@ -16,6 +16,7 @@ import { WalletProvider } from "./contexts/WalletContext";
 import About from "./pages/About";
 import Learn from "./pages/Learn";
 import UserProfile from "./pages/UserProfile";
+import Community from "./pages/Community";
 
 // const queryClient = new QueryClient();,
 
@@ -39,6 +40,7 @@ const App = () => {
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/wallet" element={<ProtectedRoute component={Wallet} />} />
                   <Route path="/trade" element={<ProtectedRoute component={Trade} />} />
+                  <Route path="/community" element={<ProtectedRoute component={Community} />} />
                   <Route path="/graph" element={<ProtectedRoute component={Graph} />} />
                   <Route path="/about" element={<ProtectedRoute component={About} />} />
                   <Route path="/learn" element={<ProtectedRoute component={Learn} />} />
