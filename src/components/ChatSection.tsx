@@ -39,6 +39,7 @@ const ChatSection: React.FC = () => {
 
     useEffect(() => {
         const initSocketConnection = async () => {
+            console.log("Initializing current user:", currentUsername);
             const token = tokenStore().getToken();
             console.log("Connecting to socket with token:", token);
 
@@ -91,18 +92,9 @@ const ChatSection: React.FC = () => {
         const socket = getSocket();
         if (!socket) return;
 
-        const nextMessage: Message = {
-            id: `${Date.now()}`,
+        socket.emit('send_message', {
             message: newMessage.trim(),
-            username: currentUsername,
-            timestamp: new Date().toISOString(),
-        };
-
-        // Optimistic UI
-        setMessages((prev) => (prev ? [...prev, nextMessage] : [nextMessage]));
-
-        // Send to backend (will work later)
-        socket.emit('send_message', nextMessage);
+        });
 
         setNewMessage('');
     };
