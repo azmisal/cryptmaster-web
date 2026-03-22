@@ -14,9 +14,9 @@ const Footer = () => {
       { name: "Learn", path: isAuthenticated ? "/learn" : "/login" },
     ],
     platform: [
-      { name: "Graphs", path: isAuthenticated ? "/learn" : "/login" },
-      { name: "Trade", path: isAuthenticated ? "/learn" : "/login" },
-      { name: "Wallet", path: isAuthenticated ? "/learn" : "/login" },
+      { name: "Graphs", path: isAuthenticated ? "/graph" : "/login" },
+      { name: "Trade", path: isAuthenticated ? "/trade" : "/login" },
+      { name: "Wallet", path: isAuthenticated ? "/wallet" : "/login" },
     ],
   };
 

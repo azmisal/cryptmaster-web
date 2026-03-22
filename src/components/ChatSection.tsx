@@ -1,10 +1,12 @@
- import { getAllMessages } from '@/api/Messages';
+import { getAllMessages } from '@/api/Messages';
 import Navbar from '@/components/Navbar';
 import { Message } from '@/interfaces/Messages';
 import { Box, OutlinedInput, InputLabel, InputAdornment, IconButton, Typography } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import { Send } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
+import { getSocket, connectSocket, disconnectSocket } from "@/api/socket"
+import { tokenStore } from '@/stores/tokenstore';
 
 import React, { useEffect, useRef } from "react";
 
@@ -12,11 +14,12 @@ import React, { useEffect, useRef } from "react";
 const ChatSection: React.FC = () => {
     const { user } = useUser();
     const currentUsername = user?.username;
-
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
     const [messages, setMessages] = React.useState<Message[] | null>([]);
     const [newMessage, setNewMessage] = React.useState<string>('');
 
+
+    //get all messages on component mount
     useEffect(() => {
         const fetchMessages = async () => {
             const response = await getAllMessages();
@@ -24,15 +27,41 @@ const ChatSection: React.FC = () => {
             console.log("Fetching messages...");
         }
         fetchMessages();
-    }, [setMessages]);
+    }, []);
 
+    //for text send scrolling to bottom
     useEffect(() => {
         if (!messagesContainerRef.current) return;
         messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }, [messages]);
 
+    //for websocket connection
+    useEffect(() => {
+        const token = tokenStore().getToken();
+        let socket;
+
+        if (token) {
+            socket = connectSocket(token);
+        }
+        if (!socket) return;
+
+        socket.on('receive_message', (data) => {
+            console.log("📩 Message received:", data);
+
+            setMessages((prev) => (prev ? [...prev, data] : [data]));
+        });
+        return () => {
+            socket.off('receive_message'); 
+            disconnectSocket();
+        };
+    }, []);
+
+
     const handlesend = () => {
         if (!newMessage.trim()) return;
+
+        const socket = getSocket();
+        if (!socket) return;
 
         const nextMessage: Message = {
             id: `${Date.now()}`,
@@ -41,9 +70,14 @@ const ChatSection: React.FC = () => {
             timestamp: new Date().toISOString(),
         };
 
+        // Optimistic UI
         setMessages((prev) => (prev ? [...prev, nextMessage] : [nextMessage]));
+
+        // Send to backend (will work later)
+        socket.emit('send_message', nextMessage);
+
         setNewMessage('');
-    }
+    };
 
     return (
         <Box sx={{ minHeight: '100vh' }}>
