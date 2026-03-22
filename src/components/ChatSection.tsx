@@ -7,6 +7,7 @@ import { Send } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { getSocket, connectSocket, disconnectSocket } from "@/api/socket"
 import { tokenStore } from '@/stores/tokenstore';
+import { useToast } from "@/hooks/use-toast"; // keep if you want
 
 import React, { useEffect, useRef } from "react";
 
@@ -17,6 +18,7 @@ const ChatSection: React.FC = () => {
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
     const [messages, setMessages] = React.useState<Message[] | null>([]);
     const [newMessage, setNewMessage] = React.useState<string>('');
+    const { toast } = useToast();
 
 
     //get all messages on component mount
@@ -35,23 +37,49 @@ const ChatSection: React.FC = () => {
         messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }, [messages]);
 
-    //for websocket connection
     useEffect(() => {
-        const token = tokenStore().getToken();
-        let socket;
+        const initSocketConnection = async () => {
+            const token = tokenStore().getToken();
+            console.log("Connecting to socket with token:", token);
 
-        if (token) {
-            socket = connectSocket(token);
-        }
-        if (!socket) return;
+            if (!token) {
+                toast({
+                    title: "Transaction Failed",
+                    description:
+                        "No token found. Please log in again.",
+                    variant: "destructive",
+                });
+                console.log("No token found. Cannot connect to community.");
+                return;
+            }
 
-        socket.on('receive_message', (data) => {
-            console.log("📩 Message received:", data);
+            const socket = connectSocket(token); // ⚠️ no need await
 
-            setMessages((prev) => (prev ? [...prev, data] : [data]));
-        });
+            if (!socket) {
+                toast({
+                    title: "Transaction Failed",
+                    description:
+                        "Failed to connect to community. Please try again later.",
+                    variant: "destructive",
+                });
+                console.log("❌ Failed to connect to community");
+                return;
+            }
+
+            socket.on('receive_message', (data) => {
+                console.log("📩 Message received:", data);
+
+                setMessages((prev) => (prev ? [...prev, data] : [data]));
+            });
+        };
+
+        initSocketConnection();
+
         return () => {
-            socket.off('receive_message'); 
+            const socket = getSocket();
+            if (socket) {
+                socket.off('receive_message'); // cleanup
+            }
             disconnectSocket();
         };
     }, []);
