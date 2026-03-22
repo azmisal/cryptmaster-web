@@ -24,9 +24,20 @@ const ChatSection: React.FC = () => {
     //get all messages on component mount
     useEffect(() => {
         const fetchMessages = async () => {
-            const response = await getAllMessages();
-            setMessages(response);
-            console.log("Fetching messages...");
+            const token = tokenStore().getToken();
+
+            if (!token) {
+                toast({
+                    title: "Transaction Failed",
+                    description:
+                        "No token found. Please log in again.",
+                    variant: "destructive",
+                });
+                console.log("No token found. Cannot connect to community.");
+                return;
+            }
+            const result = await getAllMessages(token);
+            setMessages(result);
         }
         fetchMessages();
     }, []);
@@ -39,9 +50,7 @@ const ChatSection: React.FC = () => {
 
     useEffect(() => {
         const initSocketConnection = async () => {
-            console.log("Initializing current user:", currentUsername);
             const token = tokenStore().getToken();
-            console.log("Connecting to socket with token:", token);
 
             if (!token) {
                 toast({
