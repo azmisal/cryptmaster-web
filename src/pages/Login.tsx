@@ -255,7 +255,7 @@ const Login = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={authLoading || actionLoading || userActionLoading}
+                disabled={actionLoading || userActionLoading}
                 sx={{
                   fontSize: { xs: '0.875rem', sm: '1rem' },
                   fontWeight: 600,
@@ -274,7 +274,7 @@ const Login = () => {
                   }
                 }}
               >
-                {authLoading || actionLoading || userActionLoading ? "Signing In..." : "Sign In"}
+                {actionLoading || userActionLoading ? "Signing In..." : "Sign In"}
               </Button>
             </Box>
 
