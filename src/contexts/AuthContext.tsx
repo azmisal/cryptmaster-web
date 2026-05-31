@@ -33,11 +33,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await refreshToken();
 
           token = tokenStore().getToken();
-          if (token)
-            navigate("/wallet");
-          else {
+          if (!token)
             navigate("/");
-          }
+          
         } catch {
           tokenStore().clearToken();
           clearUser();

@@ -5,10 +5,19 @@ import FeaturesSection from "@/components/FeaturesSection";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
+import { useEffect } from 'react';
+import { tokenStore } from '@/stores/tokenstore';
 
 const Home = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = tokenStore().getToken()
+    if(token) {
+      navigate("/wallet");
+    }
+  }, );  
 
   const handleGetStarted = () => {
     toast({
