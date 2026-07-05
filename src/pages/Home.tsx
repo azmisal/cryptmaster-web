@@ -7,17 +7,18 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { useEffect } from 'react';
 import { tokenStore } from '@/stores/tokenstore';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Home = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const token = tokenStore().getToken()
-    if(token) {
+    if (isAuthenticated) {
       navigate("/wallet");
     }
-  }, );  
+  },);
 
   const handleGetStarted = () => {
     toast({
@@ -33,7 +34,7 @@ const Home = () => {
     });
     navigate("/login")
   };
-  
+
   return (
     <Box sx={{ overflow: 'hidden' }}>
       <HeroSection onGetStarted={handleGetStarted} onSignIn={handleSignIn} />

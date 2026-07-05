@@ -1,7 +1,6 @@
 import { createApiClient } from "@/api/AuthApi";
 import { IUser } from "@/interfaces/UserInterfaces";
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { useAuth } from "./AuthContext";
+import React, { createContext, useCallback, useContext, useState, ReactNode } from "react";
 import { tokenStore } from "@/stores/tokenstore";
 
 // Define the shape of user data
@@ -30,15 +29,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [userActionLoading, setUserActionLoading] = useState(false);
 
-  const setUserContext = (user: IUser) => {
+  const setUserContext = useCallback((user: IUser) => {
     setUser(user);
-  };
+  }, []);
 
-  const clearUser = () => {
+  const clearUser = useCallback(() => {
     setUser(null);
-  };
+  }, []);
 
-  const updateUser = async (user: IUser) => {
+  const updateUser = useCallback(async (user: IUser) => {
 
     setUserActionLoading(true);
     const accessToken = tokenStore().getToken();
@@ -53,11 +52,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setUserActionLoading(false);
     }
 
-  }
+  }, []);
 
   const contextValue = React.useMemo(
     () => ({ user, setUser: setUserContext, userActionLoading, clearUser, updateUser }),
-    [user, userActionLoading]
+    [user, setUserContext, userActionLoading, clearUser, updateUser]
   );
 
   return (

@@ -1,15 +1,30 @@
 import { triggerLogout } from "@/events/AuthEvents";
 import { tokenStore } from "@/stores/tokenstore";
-import axios, { AxiosError, AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios";
 
 export const API = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   withCredentials: true,
 });
 
+let isRefreshing = false;
+
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (err: any) => void;
+}[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token!);
+  });
+
+  failedQueue = [];
+};
 
 export const createApiClient = (
-  accessToken: string | null
+  _accessToken: string | null
 ): AxiosInstance => {
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
@@ -31,23 +46,6 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
-
-// ---------------------- REFRESH QUEUE HANDLING ----------------------
-let isRefreshing = false;
-
-let failedQueue: {
-  resolve: (token: string) => void;
-  reject: (err: any) => void;
-}[] = [];
-
-const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) prom.reject(error);
-    else prom.resolve(token!);
-  });
-
-  failedQueue = [];
-};
 
 // ---------------------- RESPONSE INTERCEPTOR ----------------------
 api.interceptors.response.use(

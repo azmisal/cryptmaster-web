@@ -48,7 +48,7 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
   const [tab, setTab] = useState(0);
   const theme = useTheme();
   const { toast } = useToast();
-  const { wallet } = useWallet();
+  const { wallet, walletSetter } = useWallet();
   const navigate = useNavigate();
   const coinData = wallet.coins.find(item => item.name === coin?.name);
 
@@ -57,6 +57,7 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
     const usdtBalance = wallet.coins[0]?.balance || 0;
     const asset = amount / coin.price;
     const coinIndex = wallet.coins.findIndex(item => item.name === coin.name);
+
     if (usdtBalance < amount) {
       toast({
         title: "Insufficient Balance",
@@ -88,6 +89,8 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
     try {
       const accessToken = tokenStore().getToken();
       const res = await updateWallet(accessToken, updatedWallet);
+      const newWallet = res.data.updateResponse;
+      walletSetter(newWallet);
 
       if (res.status === 200) {
         navigate("/wallet");
