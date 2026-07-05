@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { RxAvatar } from "react-icons/rx";
 import {
   Box,
@@ -30,13 +30,9 @@ import {
   MdSwapHoriz
 } from 'react-icons/md';
 import Navbar from '@/components/Navbar';
-import { useAuth } from '@/contexts/AuthContext';
-import { createApiClient } from '@/api/AuthApi';
 import { useUser } from '@/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from "@/hooks/use-toast"; // keep if you want
 import { useWallet } from '@/contexts/WalletContext';
-import { tokenStore } from '@/stores/tokenstore';
 
 // Mock data for demonstration
 
@@ -44,41 +40,10 @@ import { tokenStore } from '@/stores/tokenstore';
 export const Wallet: React.FC = () => {
 
   const { user } = useUser();
-  const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { wallet, walletSetter } = useWallet();
+  const { wallet } = useWallet();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  useEffect(() => {
-    const accessToken = tokenStore().getToken();
-
-    const fetchWallet = async () => {
-      const user_Id = user.user_Id;
-      try {
-        const apiClient = createApiClient(accessToken);
-        const response = await apiClient.post("/wallet", { user_Id });
-        const data = await response.data.wallet;
-        walletSetter(data);
-      } catch (err: any) {
-        if (err.response?.status === 401) {
-          toast({
-            title: "Invalid User",
-            description: "Please Re-login and try again",
-            variant: "destructive",
-          });
-          navigate('/login');
-        } else {
-          setError(err.message);
-        }
-      }
-    };
-
-    if (accessToken) {
-      fetchWallet();
-    }
-  }, []);
 
   const handleTrade = (coinSymbol: string) => {
     if (coinSymbol.toUpperCase() === "USDT") {
@@ -127,11 +92,11 @@ export const Wallet: React.FC = () => {
 
           <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
             <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 0.5, bgclip: "text", background: "linear-gradient(90deg, #9F7AEA 0%, #ED64A6 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              {user.username}
+              {user?.username}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' }, gap: 1, mb: 1, color: 'text.secondary' }}>
               <MdEmail />
-              <Typography variant="body1">{user.email}</Typography>
+              <Typography variant="body1">{user?.email}</Typography>
             </Box>
           </Box>
 
@@ -293,4 +258,3 @@ export const Wallet: React.FC = () => {
     </Box>
   );
 };
-
