@@ -143,6 +143,8 @@ const TradeModal = ({ coin, isOpen, onClose }: TradeModalProps) => {
     try {
       const accessToken = tokenStore().getToken();
       const res = await updateWallet(accessToken, updatedWallet);
+      const newWallet = res.data.updateResponse;
+      walletSetter(newWallet);
       if (res.status === 200) {
         navigate("/wallet");
       }
