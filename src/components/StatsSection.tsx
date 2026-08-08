@@ -4,9 +4,9 @@ const StatsSection = () => {
   const theme = useTheme();
   
   const stats = [
-    { value: "10K+", label: "Active Traders", icon: "👥" },
+    { value: "100+", label: "Active Traders", icon: "👥" },
     { value: "Unlimited", label: "Virtual Volume", icon: "💰" },
-    { value: "10", label: "Crypto Pairs", icon: "🔗" },
+    { value: "50+", label: "Crypto Pairs", icon: "🔗" },
     { value: "99.9%", label: "Uptime", icon: "⚡" }
   ];
 

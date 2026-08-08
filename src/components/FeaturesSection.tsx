@@ -17,7 +17,7 @@ const FeaturesSection = () => {
     {
       icon: "🏆",
       title: "Competitive Gaming",
-      description: "Compete with other traders and climb leaderboards"
+      description: "Compete with other traders and climb leaderboards- (Coming Soon)"
     },
     {
       icon: "📚",
