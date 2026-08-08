@@ -112,7 +112,6 @@ const ChatSection: React.FC = () => {
         <Box sx={{ minHeight: '100vh' }}>
             <Navbar />
             <Box sx={{ p: 4, pt: 8 }}>
-                {/* <h1>Community Chat</h1> */}
                 <Box sx={{ mt: 2, width: '100%', borderRadius: 2, p: 2, minHeight: '80vh' }}>
                     <Box ref={messagesContainerRef} sx={{ minHeight: '70vh', bgcolor: 'background.paper', borderRadius: 2, p: 2, overflowY: 'auto', maxHeight: '70vh' }}>
                         {messages && messages.length > 0 ? (
