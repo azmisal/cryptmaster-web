@@ -17,15 +17,14 @@ import About from "./pages/About";
 import Learn from "./pages/Learn";
 import UserProfile from "./pages/UserProfile";
 import Community from "./pages/Community";
-import ComingSoon from "./pages/ComingSoon";
-
-// const queryClient = new QueryClient();,
+// import ComingSoon from "./pages/ComingSoon";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const App = () => {
 
 
   return (
-    // <QueryClientProvider client={queryClient}>
     <UserProvider>
       <WalletProvider>
         <CustomThemeProvider>
@@ -40,6 +39,8 @@ const App = () => {
                   {/* <Route path="/community" element={<ProtectedRoute component={ComingSoon} />} /> */}
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/wallet" element={<ProtectedRoute component={Wallet} />} />
                   <Route path="/trade" element={<ProtectedRoute component={Trade} />} />
                   <Route path="/community" element={<ProtectedRoute component={Community} />} />
